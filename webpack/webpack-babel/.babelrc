@@ -1,0 +1,29 @@
+{
+    "presets": [
+        [
+            "@babel/preset-env",
+            {
+                "useBuiltIns":"usage", //当增加垫片库的时候会按需添加,而不会把垫片库完全打包进去
+                "targets": { //根据浏览器配置去进行打包对一些都支持的语法不转换
+                    "edge": "17",
+                    "firefox": "60",
+                    "chrome": "67",
+                    "safari": "11.1",
+                },
+            }
+        ]
+    ],
+    "plugins":[
+        [
+            "@babel/plugin-transform-runtime", //使用@babel/ployfill会污染全局环境,这种以闭包的形式引入不会污染全局环境。这样再写一些类库的时候会更好
+            {
+            "absoluteRuntime": false,
+            "corejs": 2,
+            "helpers": true,
+            "regenerator": true,
+            "useESModules": false,
+            "version": "7.0.0-beta.0"
+            }
+        ]
+    ]
+}

@@ -1,0 +1,12 @@
+@import "./com.scss";
+$color :red;
+
+body{
+    background-color: $color;    
+}
+div{
+    width: 200px;
+    height: 200px;
+    background: url("../../assets/a.jpg") 100% 100%/100% 100%;
+    transform:  translate(10px,10px);
+}

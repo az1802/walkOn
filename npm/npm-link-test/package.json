@@ -1,0 +1,16 @@
+{
+  "name": "npm-link-global",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "pretest" :"node pre.js",
+    "test": "node index.js",
+    "posttest" :"node post.js"
+  },
+  "keywords": [],
+  "author": "sunjie <317474545@qq.com>",
+  "license": "ISC",
+  "dependencies": {
+  }
+}

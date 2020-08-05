@@ -1,0 +1,11 @@
+body {
+    background-color: #ff0;
+    background-color: red
+}
+
+div {
+    width: 200px;
+    height: 200px;
+    background: url(e3e190d5418a987005a9895190818ace.jpg) 100% 100%/100% 100%;
+    transform: translate(10px, 10px)
+}

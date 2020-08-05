@@ -1,0 +1,10 @@
+{
+  "name": "base",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "sunjie <317474545@qq.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "webpack": "^4.44.1"
+  }
+}

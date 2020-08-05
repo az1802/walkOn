@@ -1,0 +1,16 @@
+{
+  "name": "base",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "sunjie <317474545@qq.com>",
+  "license": "MIT",
+  "scripts": {
+    "bundle": "webpack --config webpack.config.js"
+  },
+  "devDependencies": {
+    "clean-webpack-plugin": "^3.0.0",
+    "html-webpack-plugin": "^4.3.0",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
+  }
+}

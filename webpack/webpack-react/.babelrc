@@ -1,0 +1,24 @@
+{
+    "presets": [
+        [
+          "@babel/preset-env",
+          {
+              "useBuiltIns":"usage", //当增加垫片库的时候会按需添加,而不会把垫片库完全打包进去
+              "targets": { //根据浏览器配置去进行打包对一些都支持的语法不转换
+                  "edge": "17",
+                  "firefox": "60",
+                  "chrome": "67",
+                  "safari": "11.1",
+              },
+          }
+        ],
+        [
+          "@babel/preset-react",
+          {
+            // "pragma": "dom", // default pragma is React.createElement
+            // "pragmaFrag": "DomFrag", // default is React.Fragment
+            // "throwIfNamespace": false // defaults to true
+          }
+        ]
+      ]
+}

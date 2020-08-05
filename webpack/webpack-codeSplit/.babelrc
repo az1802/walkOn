@@ -1,0 +1,6 @@
+{
+    "presets": ["@babel/env"],
+    // "plugins": ["dynamic-import-webpack"],//非官方的异步导入的插件
+    // "plugins": ["@babel/plugin-syntax-dynamic-import"] //官方的意不导入的插件支持 import( /* webpackChunkName:"lodash"*/ "lodash") 语法
+
+}
