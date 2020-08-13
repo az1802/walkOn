@@ -441,11 +441,6 @@ webpack.config.js内部可以到导出多种形式。
 
 
 ### 面试
-###### 对webpack的了解
-
-###### 还有哪些其它的打包工具
-
-
 ###### 与gulp、grunt的区别
     均是前端构建工具.grunt和gulp是基于任务和流（Task、Stream）的,webpack是基于入口的。webpack会自动地递归解析入口所需要加载的所有资源文件，然后用不同的Loader来处理不同的文件，用Plugin来扩展webpack功能。
     gulp和grunt需要开发者将整个前端构建过程拆分成多个`Task`，并合理控制所有`Task`的调用关系.webpack需要开发者找到入口，并需要清楚对于不同的资源应该使用什么Loader做何种解析和加工.gulp更像后端开发者的思路，需要对于整个流程了如指掌,webpack更倾向于前端开发者的思路.
@@ -466,8 +461,6 @@ webpack.config.js内部可以到导出多种形式。
 ###### 基本工作原理
 
 ###### webpack底层原理
-
-###### Webpack 的原理？（编译原理）
 
 ###### webpack的entry和output
   entry入口,告诉webpack要使用那个模块作为构建项目的起点.
@@ -502,7 +495,7 @@ webpack.config.js内部可以到导出多种形式。
 
 ###### webpack的source map
 
-###### webpack的mainfest
+###### webpack的manifest
 
 ###### webpack的chunk
 
@@ -515,7 +508,6 @@ webpack.config.js内部可以到导出多种形式。
 
 ###### webpack如何提取公共模块
 
-
 ###### webpack有哪些方法优化前端性能
 
 ###### webpack如何配置单页面应用和多页面应用
@@ -527,20 +519,23 @@ webpack.config.js内部可以到导出多种形式。
   4 使用Happypack 实现多线程加速编译
   5 使用webpack-uglify-parallel来提升uglifyPlugin的压缩速度。 原理上webpack-uglify-parallel采用了多核并行压缩来提升压缩速度
   6 使用Tree-shaking和Scope Hoisting来剔除多余代码
+  7 利用缓存提升二次构建速度 babel-loader开启cacheDirectory参数,cache-loader放在其他loader之前,hard-source-webpack-plugin为模块提供中间缓存
+  8 exclude include来缩小构建的目标加快速度
+  9 resolve来告诉模块的具体位置加快模块的搜索速度
+  10 动态垫片库来即按需加载垫片库而不是全部打包进去.
 
 
 ###### npm打包时有哪些注意事项
 
-###### webpack5有哪些新的特点
-
 ###### webpack本地开发怎么解决跨域的
+通过配置代理,将请求转发到中间层,中间层服务器请求真正的数据服务,获取数据之后再返回数据带代理
 
-
-
-
-
-
-
-
-#### TODO
-    mainfest的使用 分离  优化等操作. __DEV__全局环境的使用.HMR的原理及处理过程.webpack5的新特性.
+###### webpack5有哪些新的特点
+[webpack5](https://juejin.im/post/6844904169405415432)
+1 优化持久缓存 (webpack4中需要配置cache-loader等操作,v5默认memory)
+2 优化长期缓存
+3 更好的TreeShaking
+4 Nodejs的polyfill脚本被移除
+  最开始，Webpack 目标是允许在浏览器中运行 Node 模块。但是现在在 Webpack 看来，大多模块就是专门为前端开发的。在 v4 及以前的版本中，对于大多数的 Node 模块会自动添加 polyfill 脚本，polyfill 会加到最终的 bundle 中，其实通常情况下是没有必要的。在 v5 中将停止这一行为
+5 模块联邦
+  让 Webpack 达到了线上 runtime 的效果，让代码直接在独立应用间利用 CDN 直接共享，不再需要本地安装 NPM 包、构建再发布了！
