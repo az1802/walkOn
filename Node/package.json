@@ -1,0 +1,14 @@
+{
+  "name": "Node",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "sunjie <317474545@qq.com>",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "progress": "^2.0.3"
+  },
+  "devDependencies": {
+    "cowsay": "^1.4.0"
+  }
+}

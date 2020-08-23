@@ -1,0 +1,24 @@
+* {
+    padding: 0px;
+    margin: 0px;
+}
+
+
+.container {
+    width: 100%;
+    height: 400px;
+}
+
+.a {
+    height: 100%;
+    float: left;
+    width: 100px;
+    background-color: red;
+}
+
+.c {
+    height: 100%;
+    float: right;
+    width: 100px;
+    background-color: red;
+}

@@ -42,7 +42,7 @@ entry: {
     // devtool:"cheap-source-map",//没有列映射(column mapping)的 source map
     // devtool:"inline-source-map",//source map转换为DataUrl后添加到bundle中,没有单独source map文件
     // devtool:"cheap-module-source-map",//没有列映射source map同时会将第三方模块化的错误地址也显示出来
-    // devtool:"eval",//打包后的代码通过eval()来建议source map关系的
+    // devtool:"eval",//打包后的代码通过eval()来建立source map关系的
 }
 ```
 
@@ -454,13 +454,7 @@ webpack.config.js内部可以到导出多种形式。
     5 完成模块编译：在经过第4步使用 Loader 翻译完所有模块后，得到了每个模块被翻译后的最终内容以及它们之间的依赖关系；
     6 输出资源：根据入口和模块之间的依赖关系，组装成一个个包含多个模块的 Chunk，再把每个 Chunk 转换成一个单独的文件加入到输出列表，这步是可以修改输出内容的最后机会；
     7 输出完成：在确定好输出内容后，根据配置确定输出的路径和文件名，把文件内容写入到文件系统。
-    在以上过程中，Webpack 会在特定的时间点广播出特定的事件，插件在监听到感兴趣的事件后会执行特定的逻辑，并且插件可以调用Webpack提供的API改变Webpack的运行结果。
-
-
-
-###### 基本工作原理
-
-###### webpack底层原理
+    在以上过程中，Webpack 会在特定的时间点广播出特定的事件，插件在监听到感兴趣的事件后会执行特定的逻辑，并且插件可以调用Webpack提供的API改变Webpack的运行结果
 
 ###### webpack的entry和output
   entry入口,告诉webpack要使用那个模块作为构建项目的起点.
@@ -492,10 +486,47 @@ webpack.config.js内部可以到导出多种形式。
 ###### webpack HMR热更新的原理
   HMR原理示意图
 ![alt HMR原理](./assets/HMR原理.jpg)
+* watch 编译过程、devServer 推送更新消息到浏览器
+* 浏览器接收到服务端消息做出响应
+* 对模块进行热更新或刷新页面
+
 
 ###### webpack的source map
+Source Maps不仅仅是一个.map后缀的文件，而是由浏览器、.map文件生成器和.map文件组成的一套技术方案。
+.map文件，其实是一个关系映射文件，用于存放源码和编译后代码的文件、行号、列号和变量名的映射关系；
+.map文件生成器，每种预处理器(Lessc、Closure、cljsc等)都可通过可选项设置如何生成.map文件；
+浏览器，Chrome和FF均提供Source Maps支持（IE11依然不支持），浏览器实质上提供的是.map文件解析引擎，根据.map文件内容加载源文件和在调试模式中关联源码和编译后代码。另外编译后代码最后一行会追加一行指向.map文件语句，指向的方式有http uri scheme 和 data uri scheme两种。
+http uri scheme，格式为 //# sourceMappingURL=sample.js.map?rel=1420853090118 
+data uri scheme，就是通过对.map文件进行base64编码，然后编译后代码最后一行以data uri scheme的形式引入.map文件内容，格式为 //# sourceMappingURL=data:application/json;base64,Asdi....... 
+```javascript
+{
+    "version":3, //Source map的版本，目前为3；
+    "file":"/C:/lein/myapp/out/sample.js",//编译后的文件路径；
+    "sources":["sample.cljs?rel=1420853090124"],//源码文件路径数组；
+    "sourceRoot":"",""://源码文件的所在目录
+    "mappings":"AAAA;;AAEA,oBAAA,pBAAMA,yCAAYC;AAAlB,AACC,AAAMC,YAAWD;;AACjB,GAAI,CAAA,QAAOA;AACV,OAACE,qBAAW,CAAA,MAAKF;;AADlB",//，记录源码与编译后代码的位置信息。
+    "names":["sample/becomeGeek", "process", "js/console", "becomeGeek"]//转换前的所有变量名和属性名。
+    }
+```
+mappings中
+第一层是行对应，以分号（;）表示，每个分号对应转换后源码的一行。所以，第一个分号前的内容，就对应源码的第一行，以此类推。
+第二层是位置对应，以逗号（,）表示，每个逗号对应转换后源码的一个位置。所以，第一个逗号前的内容，就对应该行源码的第一个位置，以此类推。
+第三层是位置转换，以VLQ编码表示，代表该位置对应的转换前的源码位置。
+每个位置使用五位,表示五个字段,第五位不是必须的可以被省略
+- 第一位，表示这个位置在（转换后的代码的）的第几列。
+- 第二位，表示这个位置属于sources属性中的哪一个文件。
+- 第三位，表示这个位置属于转换前代码的第几行。
+- 第四位，表示这个位置属于转换前代码的第几列。
+- 第五位，表示这个位置属于names属性中的哪一个变量。
+
+###### webpack的runtime
+ runtime，以及伴随的 manifest 数据，主要是指：在浏览器运行时，webpack 用来连接模块化的应用程序的所有代码。runtime 包含：在模块交互时，连接模块所需的加载和解析逻辑。包括浏览器中的已加载模块的连接，以及懒加载模块的执行逻辑。
 
 ###### webpack的manifest
+那么，一旦你的应用程序中，形如 index.html 文件、一些 bundle 和各种资源加载到浏览器中，会发生什么？你精心安排的 /src 目录的文件结构现在已经不存在，所以 webpack 如何管理所有模块之间的交互呢？这就是 manifest 数据用途的由来……
+当编译器(compiler)开始执行、解析和映射应用程序时，它会保留所有模块的详细要点。这个数据集合称为 "Manifest"，当完成打包并发送到浏览器时，会在运行时通过 Manifest 来解析和加载模块。无论你选择哪种模块语法，那些 import 或 require 语句现在都已经转换为 __webpack_require__ 方法，此方法指向模块标识符(module identifier)。通过使用 manifest 中的数据，runtime 将能够查询模块标识符，检索出背后对应的模块。
+所以，现在你应该对 webpack 在幕后工作有一点了解。“但是，这对我有什么影响呢？”，你可能会问。答案是大多数情况下没有。runtime 做自己该做的，使用 manifest 来执行其操作，然后，一旦你的应用程序加载到浏览器中，所有内容将展现出魔幻般运行。然而，如果你决定通过使用浏览器缓存来改善项目的性能，理解这一过程将突然变得尤为重要。
+通过使用 bundle 计算出内容散列(content hash)作为文件名称，这样在内容或文件修改时，浏览器中将通过新的内容散列指向新的文件，从而使缓存无效。一旦你开始这样做，你会立即注意到一些有趣的行为。即使表面上某些内容没有修改，计算出的哈希还是会改变。这是因为，runtime 和 manifest 的注入在每次构建都会发生变化。
 
 ###### webpack的chunk
 
@@ -505,6 +536,13 @@ webpack.config.js内部可以到导出多种形式。
   通过import来确定加载的时机
 
 ###### webpack中tree shaking原理
+它的工作是使用编辑器判断出某些代码是不可能执行的，然后清除。
+Tree-shaking是依赖ES6模块静态分析的，ES6 module的特点如下：
+1 只能作为模块顶层的语句出现
+2 import 的模块名只能是字符串常量
+3 import binding 是 immutable的
+
+
 
 ###### webpack如何提取公共模块
 
@@ -521,11 +559,26 @@ webpack.config.js内部可以到导出多种形式。
   6 使用Tree-shaking和Scope Hoisting来剔除多余代码
   7 利用缓存提升二次构建速度 babel-loader开启cacheDirectory参数,cache-loader放在其他loader之前,hard-source-webpack-plugin为模块提供中间缓存
   8 exclude include来缩小构建的目标加快速度
-  9 resolve来告诉模块的具体位置加快模块的搜索速度
+  9 resolve来告诉模块的具体位置,检测的文件后缀名,采取的入口文件加快模块的搜索速度
   10 动态垫片库来即按需加载垫片库而不是全部打包进去.
 
 
 ###### npm打包时有哪些注意事项
+Npm是目前最大的 JavaScript 模块仓库，里面有来自全世界开发者上传的可复用模块。你可能只是JS模块的使用者，但是有些情况你也会去选择上传自己开发的模块。 关于NPM模块上传的方法可以去官网上进行学习，这里只讲解如何利用webpack来构建。
+NPM模块需要注意以下问题：
+1 支持CommonJS模块化规范，所以要求打包后的最后结果也遵守该规则。
+2 Npm模块使用者的环境是不确定的，很有可能并不支持ES6，所以打包的最后结果应该是采用ES5编写的。并且如果ES5是经过转换的，请最好连同SourceMap一同上传。
+3 Npm包大小应该是尽量小（有些仓库会限制包大小）
+4 发布的模块不能将依赖的模块也一同打包，应该让用户选择性的去自行安装。这样可以避免模块应用者再次打包时出现底层模块被重复打包的情况。
+5 UI组件类的模块应该将依赖的其它资源文件，例如.css文件也需要包含在发布的模块里。
+基于以上需要注意的问题，我们可以对于webpack配置做以下扩展和优化：
+
+1 CommonJS模块化规范的解决方案： 设置output.libraryTarget='commonjs2'使输出的代码符合CommonJS2 模块化规范，以供给其它模块导入使用
+2 输出ES5代码的解决方案：使用babel-loader把 ES6 代码转换成 ES5 的代码。再通过开启devtool: 'source-map'输出SourceMap以发布调试。
+3 Npm包大小尽量小的解决方案：Babel 在把 ES6 代码转换成 ES5 代码时会注入一些辅助函数，最终导致每个输出的文件中都包含这段辅助函数的代码，造成了代码的冗余。解决方法是修改.babelrc文件，为其加入transform-runtime插件
+4 不能将依赖模块打包到NPM模块中的解决方案：使用externals配置项来告诉webpack哪些模块不需要打包。
+5 对于依赖的资源文件打包的解决方案：通过css-loader和extract-text-webpack-plugin来实现，配置如下：
+
 
 ###### webpack本地开发怎么解决跨域的
 通过配置代理,将请求转发到中间层,中间层服务器请求真正的数据服务,获取数据之后再返回数据带代理

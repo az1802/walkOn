@@ -1,7 +1,8 @@
 # Vue
 
 
-
+### vue3
+todo: provide inject  区别
 
 ### vue-cli
 #### 安装
@@ -156,3 +157,45 @@ history模式   URL 就像正常的 url，例如 http://yoursite.com/user/id，�
 
 
 ### vite
+https://developer.aliyun.com/article/761551
+##### 简介
+专门为 vue 打造的开发利器，其目的是使 vue 项目的开发更加简单和快速。   vite 究竟有什么作用？用 vite 文档上的介绍。
+它具有以下特点： 
+1. 快速的冷启动 
+2. 即时的热模块 
+3. 真正的按需编译
+
+##### 原理
+Vite，一个基于浏览器原生 ES imports 的开发服务器。利用浏览器去解析 imports，在服务器端按需编译返回，完全跳过了打包这个概念，服务器随起随用。同时不仅有 Vue 文件支持，还搞定了热更新，而且热更新的速度不会随着模块增多而变慢。针对生产环境则可以把同一份代码用 rollup 打包。
+
+##### 使用
+$ npm init vite-app <project-name>
+$ cd <project-name>
+$ npm install
+$ npm run dev
+
+##### vite如何处理模块
+```html
+<script type="module">
+    import { createApp } from 'vue'
+    import App from '/App.vue'
+    createApp(App).mount('#app')
+</script>
+// 会转变为
+<script type="module">
+    import { createApp } from '/@modules/vue'
+    import App from '/App.vue'
+    createApp(App).mount('#app')
+</script>
+```
+过程如下
+1 在 koa 中间件里获取请求 body
+2 通过 es-module-lexer 解析资源 ast 拿到 import 的内容
+3 判断 import 的资源是否是绝对路径，绝对视为 npm 模块
+4 返回处理后的资源路径："vue" => "/@modules/vue"
+
+##### vite hmr原理
+1 通过 watcher 监听文件改动
+2 通过 server 端编译资源，并推送新资源信息给 client 。
+3 需要框架支持组件 rerender/reload 
+4 client 收到资源信息，执行框架 rerender 逻辑。
