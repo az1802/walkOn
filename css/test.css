@@ -5,20 +5,27 @@
 
 
 .container {
-    width: 100%;
+    width: 600px;
+    height: 600px;
+    padding: 100px;
+    background-color: blue;
+}
+
+.parent {
+    position: relative;
+    width: 400px;
     height: 400px;
+    padding: 50px;
+    background-color: yellow;
+
 }
 
-.a {
-    height: 100%;
-    float: left;
-    width: 100px;
-    background-color: red;
-}
-
-.c {
-    height: 100%;
-    float: right;
-    width: 100px;
+.child {
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    /* width: 200px; */
+    height: 200px;
+    /* padding: 20px; */
     background-color: red;
 }

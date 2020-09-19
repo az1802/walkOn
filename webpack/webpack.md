@@ -483,6 +483,35 @@ webpack.config.js内部可以到导出多种形式。
     编写Loader时要遵循单一原则，每个Loader只做一种"转义"工作。 每个Loader的拿到的是源文件内容（source），可以通过返回值的方式将处理后的内容输出，也可以调用this.callback()方法，将内容返回给webpack。 还可以通过 this.async()生成一个callback函数，再用这个callback将处理后的内容输出出去。 此外webpack还为开发者准备了开发loader的工具函数集——loader-utils。然后这样链式的处理得到最终的文件。
     相对于Loader而言，Plugin的编写就灵活了许多。 webpack在运行的生命周期中会广播出许多事件，Plugin 可以监听这些事件，在合适的时机通过 Webpack 提供的 API 改变输出结果。
 
+    plugin中常见的插件钩子
+```javascript
+function HelloWorldPlugin(options) {
+  // 使用 options 设置插件实例……
+}
+
+HelloWorldPlugin.prototype.apply = function(compiler) {
+  compiler.plugin('done', function() {
+    console.log('Hello World!');
+  });
+  // 异步插件的模式 提供callback回调 通知操作完毕
+ compiler.plugin("emit", function(compilation, callback) {
+
+    // 做一些异步处理……
+    setTimeout(function() {
+      console.log("Done with async work...");
+      callback();
+    }, 1000);
+
+  });
+};
+
+module.exports = HelloWorldPlugin;
+
+
+```
+
+
+
 ###### webpack HMR热更新的原理
   HMR原理示意图
 ![alt HMR原理](./assets/HMR原理.jpg)
